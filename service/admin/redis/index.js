@@ -6,7 +6,7 @@ module.exports = {
                 RDS_HOST = '127.0.1.1',    //服务器IP
                 RDS_PWD = 'datang',//密码
                 RDS_OPTS = { auth_pass: RDS_PWD },            //设置项
-                client = redis.createClient(RDS_PORT, RDS_HOST);
+                client = redis.createClient(RDS_PORT, RDS_HOST,RDS_OPTS);
             client.on('ready', function (data) {
                 res(client);
             })
