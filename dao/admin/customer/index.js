@@ -19,7 +19,7 @@ module.exports = {
     //新增客户
     addCustomer:function (customer) {
             // connection.connect();
-            var sql = `INSERT INTO CUSTOMER(PHONE,CITY,GENDER,AGE,SECRET) VALUES("${customer.phone}","${customer.city}",${customer.gender},"${customer.age}","${customer.secret}")`;
+            var sql = `INSERT INTO CUSTOMER(PHONE,CITY,GENDER,AGE,SECRET) VALUES("${customer.phone}","${customer.city?customer.city:''}",${customer.gender?customer.gender:-1},"${customer.age?customer.age:0}","${customer.secret}")`;
             console.log(sql);
             return new Promise((res,rej)=>{
                 connection.query(sql, function (err, results, feilds) {
@@ -47,7 +47,7 @@ module.exports = {
 },
     addRecord:function (record) {
         // connection.connect();
-        var sql = `INSERT INTO RECORDS(SUBJECT,DETAIL,PV,VISITDATE,CUSTOMERID) VALUES("${record.subject}","${record.detail}",${record.pv},"${record.visitdate}",${record.customerId})`;
+        var sql = `INSERT INTO RECORDS(SUBJECT,DETAIL,PV,URL,VISITDATE,CUSTOMERID) VALUES("${record.subject}","${record.detail}",${record.pv?record.pv:0},"${record.url?record.url:''}","${record.visitdate?record.visitdate:''}",${record.customerId})`;
         console.log(sql);
         return new Promise((res,rej)=>{
             connection.query(sql, function (err, results, feilds) {

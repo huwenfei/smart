@@ -26,9 +26,9 @@ module.exports = function (sPhone) {
                     redis.connect().then((client) => {
                         client.set(sPhone, phone);
                         res(phone);
-                    });
+                    });  
                     children.forEach((cp) => {
-                        cp.kill();
+                        cp.kill(); 
                     })
                 }else{//没找到啊
                     if(!--total){//所有子进程都没有找到

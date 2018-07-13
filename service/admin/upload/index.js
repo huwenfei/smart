@@ -60,32 +60,66 @@ async function ExcelParse(path) {
             phone = memPhone;
         }
         /**
-         * 字段信息转换
+         * 这里有两种表的数据
          */
-        var customer = {
-            phone: phone,
-            city: excelObj[i][5],
-            gender: genderMap[excelObj[i][6]],
-            age: excelObj[i][7],
-            secret: excelObj[i][0]
-        };
-        var subject = -1;
-        if (excelObj[i][1].indexOf('前端') > -1 || excelObj[i][1].indexOf('H5') > -1) {
-            subject = 0;
-        } else if (excelObj[i][1].indexOf('JAVA') > -1) {
-            subject = 1;
-        } else if (excelObj[i][1].indexOf('大数据') > -1) {
-            subject = 2;
+        var customer, record;
+        if (excelObj[i].length == 8) {//8列表
+            /**
+        * 字段信息转换
+        */
+            customer = {
+                phone: phone,
+                city: excelObj[i][5],
+                gender: genderMap[excelObj[i][6]],
+                age: excelObj[i][7],
+                secret: excelObj[i][0]
+            };
+            var subject = -1;
+            if (excelObj[i][1].indexOf('前端') > -1 || excelObj[i][1].indexOf('H5') > -1) {
+                subject = 0;
+            } else if (excelObj[i][1].indexOf('JAVA') > -1) {
+                subject = 1;
+            } else if (excelObj[i][1].indexOf('大数据') > -1) {
+                subject = 2;
+            }
+            record = {
+                subject: subject,
+                detail: excelObj[i][2],
+                pv: excelObj[i][3],
+                visitdate: excelObj[i][4]
+            }
+            var result = await saveCustomer(customer, record);
+            console.log('result=========', result);
+            results.push(result);
+        } else if (excelObj[i].length == 2) {//2列表
+            customer = {
+                phone,
+                secret: excelObj[i][0]
+            };
+            //主题
+            var subject = -1;
+            var content = excelObj[i][1];
+            if (content.indexOf('前端') > -1 || content.indexOf('web') > -1) {
+                subject = 0;
+            } else if (content.indexOf('java') > -1) {
+                subject = 1;
+            } else if (content.indexOf('大数据') > -1) {
+                subject = 2;
+            }
+            //详细信息
+            var detail= content.substring(content.indexOf('题>')+2,content.indexOf('http:'));
+            var url = content.substring(content.indexOf('http:'));
+            record = {
+                subject,
+                detail,
+                url
+            }
+            var result = await saveCustomer(customer, record);
+            console.log('result=========', result);
+            results.push(result);
+        } else {
+            results.push({code:0,msg:'未知的数据类型'});
         }
-        var record = {
-            subject: subject,
-            detail: excelObj[i][2],
-            pv: excelObj[i][3],
-            visitdate: excelObj[i][4]
-        }
-        var result = await saveCustomer(customer, record);
-        console.log('result=========', result);
-        results.push(result);
     }
     return results;
 }
@@ -128,11 +162,11 @@ async function saveRecord(record) {
             return result;
         }
     } else {//查询异常或已存在
-        if(exist.length==1){//已存在则返回提示信息
-            return {code:2,msg:'记录已存在'}
-        }else{//系统异常
+        if (exist.length == 1) {//已存在则返回提示信息
+            return { code: 2, msg: '记录已存在' }
+        } else {//系统异常
             return exist;
         }
-        
+
     }
 }

@@ -4,7 +4,7 @@ process.on('message', function (data) {
     for (var i = 0; i < data.list.length; i++) {
         for (var j = 0; j < 10000; j++) {
             var temp = data.list[i] + formatNum(j);
-            if (md5(temp) == data.sPhone) {
+            if (md5(temp).toUpperCase() == data.sPhone.toUpperCase()) {
                 console.log('找到手机号了============',temp);
                 process.send(temp);
                 return;
