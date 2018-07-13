@@ -13,6 +13,7 @@ module.exports = function (sPhone) {
         var remainder = phonePres.length % numCPUs;
         var children = [];
         var preEnd = 0;
+        var total = numCPUs;
         for (var i = 0; i < numCPUs; i++) {
             var child = childProcess.fork(__dirname + '/getPhoneChild.js');
             children.push(child);
@@ -26,12 +27,16 @@ module.exports = function (sPhone) {
                         client.set(sPhone, phone);
                         res(phone);
                     });
-                     //杀死子进程
-                     children.forEach((cp) => {
+                    children.forEach((cp) => {
                         cp.kill();
                     })
-                }else{
-                    console.log('发回来的不是手机号是什么呢');
+                }else{//没找到啊
+                    if(!--total){//所有子进程都没有找到
+                         //杀死子进程，这里需要杀死吗？
+                        children.forEach((cp) => {
+                            cp.kill();
+                        })
+                    }
                 }
             });
         }

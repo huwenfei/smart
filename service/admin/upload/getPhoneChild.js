@@ -7,9 +7,12 @@ process.on('message', function (data) {
             if (md5(temp) == data.sPhone) {
                 console.log('找到手机号了============',temp);
                 process.send(temp);
+                return;
             }
         }
     }
+    //当前进程没找到
+    process.send(0);
     
 });
 function formatNum(num) {
